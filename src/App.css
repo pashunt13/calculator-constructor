@@ -20,6 +20,8 @@
 
 .calculator {
   position: absolute;
+  margin-left: 0;
+  padding-left: 0;
   /* width: 240px;
   height: 60px; */
   left: 76px;
@@ -174,6 +176,7 @@
 
 .rectangle {
   width: 240px;
+  list-style-type: none;
   /* height: 60px; */
   /* justify-content: flex-end; */
   display: flex;
@@ -297,11 +300,30 @@
   height: 448px;
   left: 372px;
   top: 106px;
+  margin-left: 0;
+  padding-left: 0;
 
   /* light-blue/50 */
 
   background: #f0f9ff;
   border: 2px dashed #c4c4c4;
+  border-radius: 6px;
+}
+
+.constructor2 {
+  box-sizing: border-box;
+
+  position: absolute;
+  width: 243px;
+  height: 448px;
+  left: 372px;
+  top: 106px;
+  margin-left: 0;
+  padding-left: 0;
+
+  /* light-blue/50 */
+
+  background: #f0f9ff;
   border-radius: 6px;
 }
 
