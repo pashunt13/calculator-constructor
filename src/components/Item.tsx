@@ -24,9 +24,10 @@ const Item = ({ item, isCalculatorItem }: ItemProps) => {
 
   const style = {
     opacity: isDragging || !canDrag ? 0.5 : 1,
-    fontSize: 25,
-    fontWeight: "bold",
-    cursor: "move",
+    boxShadow: !isCalculatorItem
+      ? "0px 2px 4px rgb(0 0 0 / 6%), 0px 4px 6px rgb(0 0 0 / 10%)"
+      : "none",
+    marginBottom: isCalculatorItem ? "6px" : "12px",
   };
 
   if (Array.isArray(item.value)) {

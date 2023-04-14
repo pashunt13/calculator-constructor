@@ -1,7 +1,7 @@
 import "./App.css";
 import Item from "./components/Item";
 import Switcher from "./components/Switcher";
-import Сalculator from "./components/Сalculator";
+import Calculator from "./components/Calculator";
 
 function App() {
   const items = [
@@ -12,7 +12,6 @@ function App() {
       valueStyle: "display-nums",
       value: "0",
       canDrag: true,
-      isDragging: false,
     },
     {
       id: 2,
@@ -21,7 +20,6 @@ function App() {
       valueStyle: "math-value",
       value: ["/", "x", "-", "+"],
       canDrag: true,
-      isDragging: false,
     },
     {
       id: 3,
@@ -30,7 +28,6 @@ function App() {
       valueStyle: "math-value",
       value: ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", ","],
       canDrag: true,
-      isDragging: false,
     },
     {
       id: 4,
@@ -39,7 +36,6 @@ function App() {
       valueStyle: "to-count-value",
       value: "=",
       canDrag: true,
-      isDragging: false,
     },
   ];
 
@@ -52,7 +48,7 @@ function App() {
       </ul>
 
       <Switcher />
-      <Сalculator />
+      <Calculator />
     </div>
   );
 }

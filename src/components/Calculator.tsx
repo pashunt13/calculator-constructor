@@ -4,11 +4,11 @@ import { useState } from "react";
 import Item from "./Item";
 import { ItemModel } from "../models";
 
-const Сalculator = () => {
+const Calculator = () => {
   const [items, setItems]: any[] = useState([]);
-  const [calculatorStyle, setCalculatorStyle] = useState("calculator");
+  const [calculatorStyle, setCalculatorStyle] = useState("empty-calculator");
 
-  const [{ isOver }, drop] = useDrop(() => ({
+  const [{ canDrop }, drop] = useDrop(() => ({
     accept: "item",
     item: {},
     drop: (item, monitor) => {
@@ -16,10 +16,10 @@ const Сalculator = () => {
       items.push(dropResult.item);
       // setItems([...items, dropResult.item]);
       dropResult.item.canDrag = false;
-      setCalculatorStyle("calculator2");
+      setCalculatorStyle("calculator");
     },
     collect: (monitor) => ({
-      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
     }),
   }));
 
@@ -28,7 +28,7 @@ const Сalculator = () => {
       <div
         className={calculatorStyle}
         ref={drop}
-        style={{ backgroundColor: isOver ? "#f0f9ff" : "white" }}
+        style={{ backgroundColor: canDrop ? "#f0f9ff" : "white" }}
       >
         <div className="empty-calculator-body">
           <div className="empty-calculator-text">Перетащите сюда</div>
@@ -41,18 +41,19 @@ const Сalculator = () => {
   }
 
   return (
-    <ul
-      className={calculatorStyle}
-      ref={drop}
-      style={{
-        backgroundColor: isOver ? "#f0f9ff" : "white",
-      }}
-    >
-      {items.map((item: ItemModel) => {
-        return <Item item={item} isCalculatorItem={true} />;
-      })}
-    </ul>
+    <div className={calculatorStyle} ref={drop}>
+      <ul
+        className="calculator-items"
+        style={{
+          borderBottom: canDrop ? "1px #5d5fef solid" : "none",
+        }}
+      >
+        {items.map((item: ItemModel) => {
+          return <Item item={item} isCalculatorItem={true} />;
+        })}
+      </ul>
+    </div>
   );
 };
 
-export default Сalculator;
+export default Calculator;

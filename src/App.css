@@ -293,6 +293,24 @@
   color: #fff;
 }
 
+.empty-calculator {
+  box-sizing: border-box;
+
+  position: absolute;
+  width: 243px;
+  height: 448px;
+  left: 372px;
+  top: 106px;
+  margin: 0;
+  padding: 0;
+
+  /* light-blue/50 */
+
+  background: #fff;
+  border: 2px dashed #c4c4c4;
+  border-radius: 6px;
+}
+
 .calculator {
   box-sizing: border-box;
 
@@ -306,25 +324,7 @@
 
   /* light-blue/50 */
 
-  background: #f0f9ff;
-  border: 2px dashed #c4c4c4;
-  border-radius: 6px;
-}
-
-.calculator2 {
-  box-sizing: border-box;
-
-  position: absolute;
-  width: 243px;
-  height: 448px;
-  left: 372px;
-  top: 106px;
-  margin: 0;
-  padding: 0;
-
-  /* light-blue/50 */
-
-  background: #f0f9ff;
+  background: #fff;
   border-radius: 6px;
 }
 
@@ -376,6 +376,11 @@
   text-align: center;
 
   color: #6b7280;
+}
+
+.calculator-items {
+  margin: 0;
+  padding: 0;
 }
 
 /* .App-logo {

@@ -5,5 +5,4 @@ export interface ItemModel {
   valueStyle: string;
   value: string | string[];
   canDrag: boolean;
-  isDragging: boolean;
 }
