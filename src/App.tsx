@@ -2,9 +2,10 @@ import "./App.css";
 import Item from "./components/Item";
 import Switcher from "./components/Switcher";
 import Calculator from "./components/Calculator";
+import { useState } from "react";
 
 function App() {
-  const items = [
+  const [items, setItems] = useState([
     {
       id: 1,
       type: "display",
@@ -37,18 +38,28 @@ function App() {
       value: "=",
       canDrag: true,
     },
-  ];
+  ]);
+
+  const handleItemUpdate = (newItem: any) => {
+    const updatedItems = items.map((item) => {
+      if (item.id === newItem.id) {
+        item = { ...item, ...newItem };
+      }
+      return item;
+    });
+    return setItems(updatedItems);
+  };
 
   return (
     <div className="App">
       <ul className="constructor">
         {items.map((item) => {
-          return <Item item={item} isCalculatorItem={false} />;
+          return <Item key={item.id} item={item} isCalculatorItem={false} />;
         })}
       </ul>
 
       <Switcher />
-      <Calculator />
+      <Calculator onItemUpdate={handleItemUpdate} />
     </div>
   );
 }

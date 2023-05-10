@@ -1,17 +1,24 @@
 import "../App.css";
 import { ItemModel } from "../models";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDrag } from "react-dnd";
 
 interface ItemProps {
   item: ItemModel;
   isCalculatorItem: boolean;
+  deleteHandler?: Function;
 }
 
-const Item = ({ item, isCalculatorItem }: ItemProps) => {
-  const [canDrag, setCanDrag] = useState(
-    isCalculatorItem ? isCalculatorItem : item.canDrag
-  );
+const Item = ({
+  item,
+  isCalculatorItem,
+  deleteHandler = () => console.log(item.id),
+}: ItemProps) => {
+  const [canDrag, setCanDrag] = useState(item.canDrag);
+
+  useEffect(() => {
+    setCanDrag(isCalculatorItem ? isCalculatorItem : item.canDrag);
+  }, [item.canDrag, isCalculatorItem]);
 
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "item",
@@ -19,15 +26,21 @@ const Item = ({ item, isCalculatorItem }: ItemProps) => {
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
-    end: () => setCanDrag(item.canDrag),
   }));
 
   const style = {
     opacity: isDragging || !canDrag ? 0.5 : 1,
-    boxShadow: !isCalculatorItem
-      ? "0px 2px 4px rgb(0 0 0 / 6%), 0px 4px 6px rgb(0 0 0 / 10%)"
-      : "none",
+    boxShadow:
+      canDrag && !isCalculatorItem
+        ? "0px 2px 4px rgb(0 0 0 / 6%), 0px 4px 6px rgb(0 0 0 / 10%)"
+        : "none",
     marginBottom: isCalculatorItem ? "6px" : "12px",
+  };
+
+  const remove = (id: number) => {
+    if (isCalculatorItem) {
+      deleteHandler(id);
+    }
   };
 
   if (Array.isArray(item.value)) {
@@ -38,11 +51,13 @@ const Item = ({ item, isCalculatorItem }: ItemProps) => {
           className="item"
           ref={item.canDrag ? drag : null}
           style={style}
+          onDoubleClick={() => remove(item.id)}
         >
           <div className="num-container">
             {item.value.map((value) => {
               return (
                 <button
+                  key={`valye-${value}`}
                   className={value === "0" ? "math num-0" : item.bodyStyle}
                 >
                   <div className={item.valueStyle}>{value}</div>
@@ -59,10 +74,11 @@ const Item = ({ item, isCalculatorItem }: ItemProps) => {
           className="item"
           ref={item.canDrag ? drag : null}
           style={style}
+          onDoubleClick={() => remove(item.id)}
         >
           {item.value.map((value) => {
             return (
-              <button className={item.bodyStyle}>
+              <button key={`valye-${value}`} className={item.bodyStyle}>
                 <div className={item.valueStyle}>{value}</div>
               </button>
             );
@@ -77,6 +93,7 @@ const Item = ({ item, isCalculatorItem }: ItemProps) => {
         className="item"
         ref={item.canDrag ? drag : null}
         style={style}
+        onDoubleClick={() => remove(item.id)}
       >
         <div className={item.bodyStyle}>
           <div className={item.valueStyle}>{item.value}</div>

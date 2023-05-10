@@ -4,29 +4,32 @@ import { useState } from "react";
 import Item from "./Item";
 import { ItemModel } from "../models";
 
-const Calculator = () => {
-  const [items, setItems]: any[] = useState([]);
-  const [calculatorStyle, setCalculatorStyle] = useState("empty-calculator");
+interface CalculatorProps {
+  onItemUpdate: Function;
+}
 
-  const [{ canDrop }, drop] = useDrop(() => ({
-    accept: "item",
-    item: {},
-    drop: (item, monitor) => {
-      const dropResult: any = monitor.getItem();
-      items.push(dropResult.item);
-      // setItems([...items, dropResult.item]);
-      dropResult.item.canDrag = false;
-      setCalculatorStyle("calculator");
-    },
-    collect: (monitor) => ({
-      canDrop: monitor.canDrop(),
+const Calculator = ({ onItemUpdate }: CalculatorProps) => {
+  const [items, setItems]: any[] = useState([]);
+  const [{ canDrop }, drop] = useDrop(
+    () => ({
+      accept: "item",
+      item: {},
+      drop: (item, monitor) => {
+        const dropResult: any = monitor.getItem();
+        onItemUpdate({ ...dropResult.item, canDrag: false });
+        setItems([...items, { ...dropResult.item, canDrag: false }]);
+      },
+      collect: (monitor) => ({
+        canDrop: monitor.canDrop(),
+      }),
     }),
-  }));
+    [items]
+  );
 
   if (items.length === 0) {
     return (
       <div
-        className={calculatorStyle}
+        className="empty-calculator"
         ref={drop}
         style={{ backgroundColor: canDrop ? "#f0f9ff" : "white" }}
       >
@@ -40,8 +43,13 @@ const Calculator = () => {
     );
   }
 
+  const deleteHandler = (id: number) => {
+    setItems(items.filter((item: ItemModel) => item.id !== id));
+    onItemUpdate({ id, canDrag: true });
+  };
+
   return (
-    <div className={calculatorStyle} ref={drop}>
+    <div className="calculator" ref={drop}>
       <ul
         className="calculator-items"
         style={{
@@ -49,7 +57,14 @@ const Calculator = () => {
         }}
       >
         {items.map((item: ItemModel) => {
-          return <Item item={item} isCalculatorItem={true} />;
+          return (
+            <Item
+              key={item.id}
+              item={item}
+              isCalculatorItem={true}
+              deleteHandler={deleteHandler}
+            />
+          );
         })}
       </ul>
     </div>
