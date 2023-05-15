@@ -1,32 +1,86 @@
 import "../App.css";
 import { ItemModel } from "../models";
-import { useEffect, useState } from "react";
-import { useDrag } from "react-dnd";
+import { useEffect, useState, useRef } from "react";
+import { useDrag, useDrop } from "react-dnd";
+import type { Identifier, XYCoord } from "dnd-core";
 
 interface ItemProps {
   item: ItemModel;
   isCalculatorItem: boolean;
   deleteHandler?: Function;
+  index: number;
+  moveItem?: (dragIndex: number, hoverIndex: number) => void;
+}
+
+interface DragItem {
+  index: number;
+  id: string;
+  type: string;
 }
 
 const Item = ({
   item,
   isCalculatorItem,
   deleteHandler = () => console.log(item.id),
+  index,
+  moveItem = () => console.log(item.id),
 }: ItemProps) => {
   const [canDrag, setCanDrag] = useState(item.canDrag);
 
-  useEffect(() => {
-    setCanDrag(isCalculatorItem ? isCalculatorItem : item.canDrag);
-  }, [item.canDrag, isCalculatorItem]);
+  const ref = useRef<HTMLDivElement>(null);
+  const [{ handlerId }, drop] = useDrop<
+    DragItem,
+    void,
+    { handlerId: Identifier | null }
+  >({
+    accept: "item",
+    collect(monitor) {
+      return {
+        handlerId: monitor.getHandlerId(),
+      };
+    },
+    hover(item: DragItem, monitor) {
+      if (!ref.current) {
+        return;
+      }
+      const dragIndex = item.index;
+      const hoverIndex = index;
 
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: "item",
-    item: { item },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+
+      const hoverBoundingRect = ref.current?.getBoundingClientRect();
+      const hoverMiddleY =
+        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+      const clientOffset = monitor.getClientOffset();
+      const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top;
+
+      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+        return;
+      }
+
+      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+        return;
+      }
+
+      moveItem(dragIndex, hoverIndex);
+      item.index = hoverIndex;
+    },
+  });
+
+  const [{ isDragging }, drag] = useDrag(
+    () => ({
+      type: "item",
+      item: () => {
+        return { item, index };
+      },
+      collect: (monitor) => ({
+        isDragging: !!monitor.isDragging(),
+      }),
     }),
-  }));
+    [index]
+  );
 
   const style = {
     opacity: isDragging || !canDrag ? 0.5 : 1,
@@ -43,13 +97,27 @@ const Item = ({
     }
   };
 
+  useEffect(() => {
+    setCanDrag(isCalculatorItem ? isCalculatorItem : item.canDrag);
+    if (item.type === "display" && isCalculatorItem) {
+      drag(null);
+    } else if (item.canDrag) {
+      drag(ref);
+    } else if (isCalculatorItem) {
+      drag(drop(ref));
+    } else {
+      drag(null);
+    }
+  }, [item, isCalculatorItem, drag, drop]);
+
   if (Array.isArray(item.value)) {
     if (item.type === "nums") {
       return (
         <li
           key={item.id}
           className="item"
-          ref={item.canDrag ? drag : null}
+          ref={ref as any}
+          data-handler-id={handlerId}
           style={style}
           onDoubleClick={() => remove(item.id)}
         >
@@ -72,7 +140,8 @@ const Item = ({
         <li
           key={item.id}
           className="item"
-          ref={item.canDrag ? drag : null}
+          ref={ref as any}
+          data-handler-id={handlerId}
           style={style}
           onDoubleClick={() => remove(item.id)}
         >
@@ -91,7 +160,8 @@ const Item = ({
       <li
         key={item.id}
         className="item"
-        ref={item.canDrag ? drag : null}
+        ref={ref as any}
+        data-handler-id={handlerId}
         style={style}
         onDoubleClick={() => remove(item.id)}
       >

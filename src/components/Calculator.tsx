@@ -1,6 +1,7 @@
 import "../App.css";
 import { useDrop } from "react-dnd";
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import update from "immutability-helper";
 import Item from "./Item";
 import { ItemModel } from "../models";
 
@@ -16,14 +17,57 @@ const Calculator = ({ onItemUpdate }: CalculatorProps) => {
       item: {},
       drop: (item, monitor) => {
         const dropResult: any = monitor.getItem();
-        onItemUpdate({ ...dropResult.item, canDrag: false });
-        setItems([...items, { ...dropResult.item, canDrag: false }]);
+        if (dropResult.item.canDrag) {
+          onItemUpdate({ ...dropResult.item, canDrag: false });
+          if (dropResult.item.type === "display") {
+            setItems([{ ...dropResult.item, canDrag: false }, ...items]);
+          } else {
+            setItems([...items, { ...dropResult.item, canDrag: false }]);
+          }
+        }
       },
       collect: (monitor) => ({
         canDrop: monitor.canDrop(),
       }),
     }),
     [items]
+  );
+
+  const deleteHandler = useCallback(
+    (id: number) => {
+      setItems(items.filter((item: ItemModel) => item.id !== id));
+      onItemUpdate({ id, canDrag: true });
+    },
+    [items, onItemUpdate]
+  );
+
+  const moveItem = useCallback((dragIndex: number, hoverIndex: number) => {
+    console.log("moveItem");
+    console.log(dragIndex, hoverIndex);
+    setItems((prevItems: ItemModel[]) =>
+      update(prevItems, {
+        $splice: [
+          [dragIndex, 1],
+          [hoverIndex, 0, prevItems[dragIndex] as ItemModel],
+        ],
+      })
+    );
+  }, []);
+
+  const renderItem = useCallback(
+    (item: ItemModel, index: number) => {
+      return (
+        <Item
+          key={item.id}
+          item={item}
+          isCalculatorItem={true}
+          deleteHandler={deleteHandler}
+          index={index}
+          moveItem={moveItem}
+        />
+      );
+    },
+    [deleteHandler, moveItem]
   );
 
   if (items.length === 0) {
@@ -43,29 +87,15 @@ const Calculator = ({ onItemUpdate }: CalculatorProps) => {
     );
   }
 
-  const deleteHandler = (id: number) => {
-    setItems(items.filter((item: ItemModel) => item.id !== id));
-    onItemUpdate({ id, canDrag: true });
-  };
-
   return (
     <div className="calculator" ref={drop}>
       <ul
         className="calculator-items"
-        style={{
-          borderBottom: canDrop ? "1px #5d5fef solid" : "none",
-        }}
+        // style={{
+        //   borderBottom: canDrop ? "1px #5d5fef solid" : "none",
+        // }}
       >
-        {items.map((item: ItemModel) => {
-          return (
-            <Item
-              key={item.id}
-              item={item}
-              isCalculatorItem={true}
-              deleteHandler={deleteHandler}
-            />
-          );
-        })}
+        {items.map((item: ItemModel, i: number) => renderItem(item, i))}
       </ul>
     </div>
   );

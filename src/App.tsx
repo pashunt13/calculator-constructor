@@ -52,9 +52,16 @@ function App() {
 
   return (
     <div className="App">
-      <ul className="constructor">
-        {items.map((item) => {
-          return <Item key={item.id} item={item} isCalculatorItem={false} />;
+      <ul className="sidebar">
+        {items.map((item, index) => {
+          return (
+            <Item
+              key={item.id}
+              item={item}
+              index={index}
+              isCalculatorItem={false}
+            />
+          );
         })}
       </ul>
 
