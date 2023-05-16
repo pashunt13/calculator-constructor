@@ -19,6 +19,11 @@ export enum ValueType {
   ToCount = 'to-count-value'
 }
 
+export enum ItemType {
+  Item = 'item',
+  SortableItem = 'sortableItem'
+}
+
 export interface ItemModel {
   id: number;
   type: string;

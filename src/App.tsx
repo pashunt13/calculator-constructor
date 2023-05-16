@@ -44,7 +44,7 @@ const App = () => {
   const [items, setItems] = useState(initialItems);
   const handleItemUpdate = (newItem: ItemModel) => {
     const updatedItems = items.map((item) =>
-      item.id === newItem.id ? { ...item, ...newItem } : item
+      item.id === newItem.id ? newItem : item
     );
     return setItems(updatedItems);
   };

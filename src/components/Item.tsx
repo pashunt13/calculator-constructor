@@ -1,5 +1,5 @@
 import "../App.css";
-import { ItemModel, Type } from "../models";
+import { ItemModel, Type, ItemType } from "../models";
 import { useEffect, useState, useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import type { Identifier, XYCoord } from "dnd-core";
@@ -33,7 +33,7 @@ const Item = ({
     void,
     { handlerId: Identifier | null }
   >({
-    accept: "calcItem",
+    accept: ItemType.SortableItem,
     collect(monitor) {
       return {
         handlerId: monitor.getHandlerId(),
@@ -71,7 +71,7 @@ const Item = ({
 
   const [{ isDragging }, drag] = useDrag(
     () => ({
-      type: isCalculatorItem ? "calcItem" : "item",
+      type: isCalculatorItem ? ItemType.SortableItem : ItemType.Item,
       item: () => {
         return { item, index };
       },
@@ -91,9 +91,9 @@ const Item = ({
     marginBottom: isCalculatorItem ? "6px" : "12px",
   };
 
-  const remove = (id: number) => {
+  const remove = (item: ItemModel) => {
     if (isCalculatorItem) {
-      deleteHandler(id);
+      deleteHandler(item);
     }
   };
 
@@ -119,7 +119,7 @@ const Item = ({
           ref={ref as any}
           data-handler-id={handlerId}
           style={style}
-          onDoubleClick={() => remove(item.id)}
+          onDoubleClick={() => remove(item)}
         >
           <div className="num-container">
             {item.value.map((value) => {
@@ -143,7 +143,7 @@ const Item = ({
           ref={ref as any}
           data-handler-id={handlerId}
           style={style}
-          onDoubleClick={() => remove(item.id)}
+          onDoubleClick={() => remove(item)}
         >
           {item.value.map((value) => {
             return (
@@ -163,7 +163,7 @@ const Item = ({
         ref={ref as any}
         data-handler-id={handlerId}
         style={style}
-        onDoubleClick={() => remove(item.id)}
+        onDoubleClick={() => remove(item)}
       >
         <div className={item.bodyStyle}>
           <div className={item.valueStyle}>{item.value}</div>
