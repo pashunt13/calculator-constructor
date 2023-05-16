@@ -1,5 +1,5 @@
 import "../App.css";
-import { ItemModel } from "../models";
+import { ItemModel, Type } from "../models";
 import { useEffect, useState, useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import type { Identifier, XYCoord } from "dnd-core";
@@ -21,9 +21,9 @@ interface DragItem {
 const Item = ({
   item,
   isCalculatorItem,
-  deleteHandler = () => console.log(item.id),
+  deleteHandler = () => null,
   index,
-  moveItem = () => console.log(item.id),
+  moveItem = () => null,
 }: ItemProps) => {
   const [canDrag, setCanDrag] = useState(item.canDrag);
 
@@ -33,7 +33,7 @@ const Item = ({
     void,
     { handlerId: Identifier | null }
   >({
-    accept: "item",
+    accept: "calcItem",
     collect(monitor) {
       return {
         handlerId: monitor.getHandlerId(),
@@ -71,7 +71,7 @@ const Item = ({
 
   const [{ isDragging }, drag] = useDrag(
     () => ({
-      type: "item",
+      type: isCalculatorItem ? "calcItem" : "item",
       item: () => {
         return { item, index };
       },
@@ -99,7 +99,7 @@ const Item = ({
 
   useEffect(() => {
     setCanDrag(isCalculatorItem ? isCalculatorItem : item.canDrag);
-    if (item.type === "display" && isCalculatorItem) {
+    if (item.type === Type.Display && isCalculatorItem) {
       drag(null);
     } else if (item.canDrag) {
       drag(ref);
@@ -111,7 +111,7 @@ const Item = ({
   }, [item, isCalculatorItem, drag, drop]);
 
   if (Array.isArray(item.value)) {
-    if (item.type === "nums") {
+    if (item.type === Type.Nums) {
       return (
         <li
           key={item.id}

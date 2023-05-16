@@ -3,50 +3,49 @@ import Item from "./components/Item";
 import Switcher from "./components/Switcher";
 import Calculator from "./components/Calculator";
 import { useState } from "react";
+import { ItemModel, Type, BodyType, ValueType } from "./models";
 
-function App() {
-  const [items, setItems] = useState([
-    {
-      id: 1,
-      type: "display",
-      bodyStyle: "display",
-      valueStyle: "display-nums",
-      value: "0",
-      canDrag: true,
-    },
-    {
-      id: 2,
-      type: "mathSigns",
-      bodyStyle: "math-group math",
-      valueStyle: "math-value",
-      value: ["/", "x", "-", "+"],
-      canDrag: true,
-    },
-    {
-      id: 3,
-      type: "nums",
-      bodyStyle: "math num",
-      valueStyle: "math-value",
-      value: ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", ","],
-      canDrag: true,
-    },
-    {
-      id: 4,
-      type: "toCount",
-      bodyStyle: "math to-count",
-      valueStyle: "to-count-value",
-      value: "=",
-      canDrag: true,
-    },
-  ]);
+const initialItems: ItemModel[] = [
+  {
+    id: 1,
+    type: Type.Display,
+    bodyStyle: BodyType.Display,
+    valueStyle: ValueType.Display,
+    value: "0",
+    canDrag: true,
+  },
+  {
+    id: 2,
+    type: Type.MathSigns,
+    bodyStyle: BodyType.MathSigns,
+    valueStyle: ValueType.MathSigns,
+    value: ["/", "x", "-", "+"],
+    canDrag: true,
+  },
+  {
+    id: 3,
+    type: Type.Nums,
+    bodyStyle: BodyType.Nums,
+    valueStyle: ValueType.Nums,
+    value: ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", ","],
+    canDrag: true,
+  },
+  {
+    id: 4,
+    type: Type.ToCount,
+    bodyStyle: BodyType.ToCount,
+    valueStyle: ValueType.ToCount,
+    value: "=",
+    canDrag: true,
+  },
+];
 
-  const handleItemUpdate = (newItem: any) => {
-    const updatedItems = items.map((item) => {
-      if (item.id === newItem.id) {
-        item = { ...item, ...newItem };
-      }
-      return item;
-    });
+const App = () => {
+  const [items, setItems] = useState(initialItems);
+  const handleItemUpdate = (newItem: ItemModel) => {
+    const updatedItems = items.map((item) =>
+      item.id === newItem.id ? { ...item, ...newItem } : item
+    );
     return setItems(updatedItems);
   };
 
@@ -69,6 +68,6 @@ function App() {
       <Calculator onItemUpdate={handleItemUpdate} />
     </div>
   );
-}
+};
 
 export default App;

@@ -3,23 +3,31 @@ import { useDrop } from "react-dnd";
 import { useState, useCallback } from "react";
 import update from "immutability-helper";
 import Item from "./Item";
-import { ItemModel } from "../models";
+import { ItemModel, Type } from "../models";
 
 interface CalculatorProps {
   onItemUpdate: Function;
 }
 
+interface DropResult {
+  allowedDropEffect: string;
+  dropEffect: string;
+  item: ItemModel;
+}
+
+const initialItems: ItemModel[] = [];
+
 const Calculator = ({ onItemUpdate }: CalculatorProps) => {
-  const [items, setItems]: any[] = useState([]);
+  const [items, setItems] = useState(initialItems);
   const [{ canDrop }, drop] = useDrop(
     () => ({
       accept: "item",
       item: {},
       drop: (item, monitor) => {
-        const dropResult: any = monitor.getItem();
+        const dropResult: DropResult = monitor.getItem();
         if (dropResult.item.canDrag) {
           onItemUpdate({ ...dropResult.item, canDrag: false });
-          if (dropResult.item.type === "display") {
+          if (dropResult.item.type === Type.Display) {
             setItems([{ ...dropResult.item, canDrag: false }, ...items]);
           } else {
             setItems([...items, { ...dropResult.item, canDrag: false }]);
@@ -42,8 +50,6 @@ const Calculator = ({ onItemUpdate }: CalculatorProps) => {
   );
 
   const moveItem = useCallback((dragIndex: number, hoverIndex: number) => {
-    console.log("moveItem");
-    console.log(dragIndex, hoverIndex);
     setItems((prevItems: ItemModel[]) =>
       update(prevItems, {
         $splice: [
@@ -91,9 +97,9 @@ const Calculator = ({ onItemUpdate }: CalculatorProps) => {
     <div className="calculator" ref={drop}>
       <ul
         className="calculator-items"
-        // style={{
-        //   borderBottom: canDrop ? "1px #5d5fef solid" : "none",
-        // }}
+        style={{
+          borderBottom: canDrop ? "1px #5d5fef solid" : "none",
+        }}
       >
         {items.map((item: ItemModel, i: number) => renderItem(item, i))}
       </ul>
