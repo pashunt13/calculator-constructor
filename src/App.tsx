@@ -51,21 +51,23 @@ const App = () => {
 
   return (
     <div className="App">
-      <ul className="sidebar">
-        {items.map((item, index) => {
-          return (
-            <Item
-              key={item.id}
-              item={item}
-              index={index}
-              isCalculatorItem={false}
-            />
-          );
-        })}
-      </ul>
-
       <Switcher />
-      <Calculator onItemUpdate={handleItemUpdate} />
+      <div className="container">
+        <ul className="sidebar">
+          {items.map((item, index) => {
+            return (
+              <Item
+                key={item.id}
+                item={item}
+                index={index}
+                isCalculatorItem={false}
+              />
+            );
+          })}
+        </ul>
+
+        <Calculator onItemUpdate={handleItemUpdate} />
+      </div>
     </div>
   );
 };

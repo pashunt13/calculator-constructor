@@ -3,19 +3,18 @@ import "../App.css";
 const Switcher = () => {
   return (
     <div className="switcher">
-      <div className="frame5">
-        <div className="frame4">
-          <div className="eye">
-            <div className="eye-outside"></div>
+      <div className="switcher-inactive">
+        <div className="switcher-body">
+          <div className="eye-outside">
             <div className="eye-inside"></div>
           </div>
-          Runtime
+          <div className="switcher-text">Runtime</div>
         </div>
       </div>
-      <div className="frame6">
-        <div className="frame4">
-          <div className="g">{"<>"}</div>
-          Constructor
+      <div className="switcher-active">
+        <div className="switcher-body">
+          <div className="arrows">{"<>"}</div>
+          <div className="switcher-text">Constructor</div>
         </div>
       </div>
     </div>
