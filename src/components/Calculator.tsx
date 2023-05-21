@@ -4,6 +4,7 @@ import { useState } from "react";
 import update from "immutability-helper";
 import Item from "./Item";
 import { ItemModel, Type, ItemType } from "../models";
+import cn from "classnames";
 
 interface CalculatorProps {
   onItemUpdate: Function;
@@ -20,13 +21,14 @@ const Calculator = ({ onItemUpdate }: CalculatorProps) => {
       accept: ItemType.Item,
       item: {},
       drop: (dropItem: DropItem) => {
-        if (dropItem.item.canDrag) {
-          onItemUpdate({ ...dropItem.item, canDrag: false });
-          if (dropItem.item.type === Type.Display) {
-            setItems([{ ...dropItem.item, canDrag: false }, ...items]);
-          } else {
-            setItems([...items, { ...dropItem.item, canDrag: false }]);
-          }
+        if (!dropItem.item.canDrag) {
+          return;
+        }
+        onItemUpdate({ ...dropItem.item, canDrag: false });
+        if (dropItem.item.type === Type.Display) {
+          setItems([{ ...dropItem.item, canDrag: false }, ...items]);
+        } else {
+          setItems([...items, { ...dropItem.item, canDrag: false }]);
         }
       },
       collect: (monitor) => ({
@@ -52,13 +54,17 @@ const Calculator = ({ onItemUpdate }: CalculatorProps) => {
     );
   };
 
+  const emptyCalculator = cn("empty-calculator", {
+    "canDrop-empty-calculator": canDrop,
+  });
+
+  const calculatorItems = cn("calculator-items", {
+    "canDrop-calculator": canDrop,
+  });
+
   if (items.length === 0) {
     return (
-      <div
-        className="empty-calculator"
-        ref={drop}
-        style={{ backgroundColor: canDrop ? "#f0f9ff" : "white" }}
-      >
+      <div className={emptyCalculator} ref={drop}>
         <div className="empty-calculator-body">
           <div className="empty-calculator-text">Перетащите сюда</div>
           <div className="empty-calculator-text2">
@@ -71,12 +77,7 @@ const Calculator = ({ onItemUpdate }: CalculatorProps) => {
 
   return (
     <div className="calculator" ref={drop}>
-      <ul
-        className="calculator-items"
-        style={{
-          borderBottom: canDrop ? "1px #5d5fef solid" : "none",
-        }}
-      >
+      <ul className={calculatorItems}>
         {items.map((item: ItemModel, index: number) => {
           return (
             <Item

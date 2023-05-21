@@ -1,3 +1,8 @@
+@font-face {
+  font-family: "Inter";
+  src: url("./Inter-Regular.ttf");
+}
+
 .App {
   font-family: sans-serif;
   font-style: normal;
@@ -231,4 +236,21 @@
 .calculator-items {
   margin: 0;
   padding: 0;
+}
+
+.calculator-item {
+  margin-bottom: 6px;
+  box-shadow: none;
+}
+
+.dragging-item {
+  opacity: 0.5;
+}
+
+.canDrop-empty-calculator {
+  background-color: #f0f9ff;
+}
+
+.canDrop-calculator {
+  border-bottom: 1px #5d5fef solid;
 }

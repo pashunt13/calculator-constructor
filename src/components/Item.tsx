@@ -3,6 +3,7 @@ import { ItemModel, Type, ItemType } from "../models";
 import { useEffect, useState, useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import type { Identifier, XYCoord } from "dnd-core";
+import cn from "classnames";
 
 interface ItemProps {
   item: ItemModel;
@@ -76,20 +77,16 @@ const Item = ({
         return { item, index };
       },
       collect: (monitor) => ({
-        isDragging: !!monitor.isDragging(),
+        isDragging: monitor.isDragging(),
       }),
     }),
     [index]
   );
 
-  const style = {
-    opacity: isDragging || !canDrag ? 0.5 : 1,
-    boxShadow:
-      canDrag && !isCalculatorItem
-        ? "0px 2px 4px rgb(0 0 0 / 6%), 0px 4px 6px rgb(0 0 0 / 10%)"
-        : "none",
-    marginBottom: isCalculatorItem ? "6px" : "12px",
-  };
+  const className = cn("item", {
+    "calculator-item": isCalculatorItem,
+    "dragging-item": isDragging || !canDrag,
+  });
 
   const remove = (item: ItemModel) => {
     if (isCalculatorItem) {
@@ -110,64 +107,61 @@ const Item = ({
     }
   }, [item, isCalculatorItem, drag, drop]);
 
-  if (Array.isArray(item.value)) {
-    if (item.type === Type.Nums) {
-      return (
-        <li
-          key={item.id}
-          className="item"
-          ref={ref as any}
-          data-handler-id={handlerId}
-          style={style}
-          onDoubleClick={() => remove(item)}
-        >
-          <div className="num-container">
-            {item.value.map((value) => {
-              return (
-                <button
-                  key={`valye-${value}`}
-                  className={value === "0" ? "math num-0" : item.bodyStyle}
-                >
-                  <div className={item.valueStyle}>{value}</div>
-                </button>
-              );
-            })}
-          </div>
-        </li>
-      );
-    } else {
-      return (
-        <li
-          key={item.id}
-          className="item"
-          ref={ref as any}
-          data-handler-id={handlerId}
-          style={style}
-          onDoubleClick={() => remove(item)}
-        >
-          {item.value.map((value) => {
-            return (
-              <button key={`valye-${value}`} className={item.bodyStyle}>
-                <div className={item.valueStyle}>{value}</div>
-              </button>
-            );
-          })}
-        </li>
-      );
-    }
-  } else {
+  if (!Array.isArray(item.value)) {
     return (
       <li
         key={item.id}
-        className="item"
+        className={className}
         ref={ref as any}
         data-handler-id={handlerId}
-        style={style}
         onDoubleClick={() => remove(item)}
       >
         <div className={item.bodyStyle}>
           <div className={item.valueStyle}>{item.value}</div>
         </div>
+      </li>
+    );
+  }
+
+  if (item.type === Type.Nums) {
+    return (
+      <li
+        key={item.id}
+        className={className}
+        ref={ref as any}
+        data-handler-id={handlerId}
+        onDoubleClick={() => remove(item)}
+      >
+        <div className="num-container">
+          {item.value.map((value) => {
+            return (
+              <button
+                key={`valye-${value}`}
+                className={value === "0" ? "math num-0" : item.bodyStyle}
+              >
+                <div className={item.valueStyle}>{value}</div>
+              </button>
+            );
+          })}
+        </div>
+      </li>
+    );
+  } else {
+    return (
+      <li
+        key={item.id}
+        className={className}
+        ref={ref as any}
+        data-handler-id={handlerId}
+        onDoubleClick={() => remove(item)}
+      >
+        {item.value.map((value) => {
+          return (
+            <button key={`valye-${value}`} className={item.bodyStyle}>
+              <div className={item.valueStyle}>{value}</div>
+            </button>
+          );
+        })}
       </li>
     );
   }

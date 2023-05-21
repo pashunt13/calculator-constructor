@@ -46,7 +46,7 @@ const App = () => {
     const updatedItems = items.map((item) =>
       item.id === newItem.id ? newItem : item
     );
-    return setItems(updatedItems);
+    setItems(updatedItems);
   };
 
   return (
